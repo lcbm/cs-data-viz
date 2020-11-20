@@ -1,0 +1,26 @@
+version: "3"
+
+services:
+  metabase:
+    image: metabase/metabase:v0.37.2
+    env_file: "env.d/metabase.env"
+    depends_on:
+      - postgres
+    volumes:
+      - metabase-data:/data/db
+    ports:
+      - "3000:3000"
+    deploy:
+      replicas: 1
+
+  postgres:
+    image: postgres:cs-data-viz
+    env_file: "env.d/postgres.env"
+    volumes:
+      - postgres-data:/data/db
+    deploy:
+      replicas: 1
+
+volumes:
+  postgres-data: ~
+  metabase-data: ~
