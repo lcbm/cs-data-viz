@@ -39,6 +39,18 @@ $ make bootstrap
 
 >_**NOTE**: By default, [poetry creates and manages virtual environments to install project dependencies](https://python-poetry.org/docs/basic-usage/#using-your-virtual-environment) -- meaning that it will work isolated from your global Python installation. This avoids conflicts with other packages installed in your system._
 
+After bootstraping the project, run the ETL scripts in order to extract, load and transform data from the [Brazilian eCommerce dataset](https://www.kaggle.com/olistbr/brazilian-ecommerce):
+
+```bash
+# change current working directory
+$ cd <path/to/cs-data-viz>
+
+# runs scripts to extract, load and transform data
+$ make run-etl
+```
+
+Now that the data is ready, you may proceed to the next step in order to deploy the stack.
+
 ## Deploying the Stack
 
 ### Requirements

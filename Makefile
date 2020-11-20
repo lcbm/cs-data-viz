@@ -1,6 +1,12 @@
+SCRIPTS := scripts
+MAIN := $(SCRIPTS)/main.py
 VENV := .venv
 BIN := $(VENV)/bin
 PRE_COMMIT := $(BIN)/pre-commit
+PYTHON := $(BIN)/python
+
+run-etl:
+	PYTHONPATH=. $(PYTHON) $(MAIN)
 
 bootstrap:
 	@poetry install
@@ -19,7 +25,7 @@ clean-all: clean
 	@rm -r $(VENV)
 
 format: clean
-	@poetry run black .
+	@poetry run black $(SCRIPTS)
 
 lint:
-	@poetry run flake8 .
+	@poetry run flake8 $(SCRIPTS)
