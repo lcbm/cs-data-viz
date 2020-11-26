@@ -247,3 +247,39 @@ COPY olist.order_items(
 FROM '/var/lib/postgresql/olist_order_items_dataset.csv'
 DELIMITER ','
 CSV HEADER;
+
+
+CREATE TABLE olist.wecr (
+  id                       INT      NOT NULL,
+  clothing_id              INT      NOT NULL,
+  age                      INT,
+  title                    VARCHAR,
+  review_text              VARCHAR,
+  rating                   INT,
+  recommended_ind          INT,
+  positive_feedback_count  INT,
+  division_name            VARCHAR,
+  department_name          VARCHAR,
+  class_name               VARCHAR,
+  CONSTRAINT wecr_pk
+    PRIMARY KEY (id)
+);
+
+
+COPY olist.wecr(
+  id,
+  clothing_id,
+  age,
+  title,
+  review_text,
+  rating,
+  recommended_ind,
+  positive_feedback_count,
+  division_name,
+  department_name,
+  class_name
+
+)
+FROM '/var/lib/postgresql/Womens_Clothing_E-Commerce_Reviews.csv'
+DELIMITER ','
+CSV HEADER;

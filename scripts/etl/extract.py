@@ -14,22 +14,25 @@ def load_kaggle_envars():
 
 def download_dataset_from_kaggle_as_zip():
     cwd = subprocess.check_output("pwd").decode("utf-8").strip("\n")
-    subprocess.run(
-        [
-            const.VENV_KAGGLE_BIN,
-            "datasets",
-            "download",
-            "-d",
-            "olistbr/brazilian-ecommerce",
-            "-p",
-            const.DATA_DIR,
-        ],
-        cwd=cwd,
-    )
+    for dataset in const.KAGGLE_DATASETS:
+        subprocess.run(
+            [
+                const.VENV_KAGGLE_BIN,
+                "datasets",
+                "download",
+                "-d",
+                dataset,
+                "-p",
+                const.DATA_DIR,
+            ],
+            cwd=cwd,
+        )
 
 
 def unzip_dataset():
-    with zipfile.ZipFile(f"{const.DATA_DIR}/brazilian-ecommerce.zip", "r") as zip:
-        zip.extractall(const.DATA_DIR)
+    for dataset in const.KAGGLE_DATASETS:
+        dataset_name = dataset[dataset.find("/"):]
+        with zipfile.ZipFile(f"{const.DATA_DIR}/{dataset_name}.zip", "r") as zip:
+            zip.extractall(const.DATA_DIR)
 
-    os.remove(f"{const.DATA_DIR}/brazilian-ecommerce.zip")
+        os.remove(f"{const.DATA_DIR}/{dataset_name}.zip")

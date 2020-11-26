@@ -11,6 +11,11 @@ ENVARS_DIR = f"{DOCKER_DIR}/env.d"
 DATA_DIR = f"{DOCKER_DIR}/database/data"
 DATA_FILE_EXTENSION = ".csv"
 
+KAGGLE_DATASETS = [
+    "olistbr/brazilian-ecommerce",
+    "nicapotato/womens-ecommerce-clothing-reviews",
+]
+
 OLIST_TABLE_CATEGORY_TRANSLATIONS = "product_category_name_translation"
 OLIST_TABLE_GEOLOCATION = "olist_geolocation_dataset"
 OLIST_TABLE_CUSTOMERS = "olist_customers_dataset"
@@ -147,15 +152,67 @@ OLIST_DATASET_TABLES_NULLABLE_COLUMNS = {
     OLIST_TABLE_ORDER_ITEMS: [],
 }
 
+WECR_DATASET_TABLE = "Womens_Clothing_E-Commerce_Reviews"
+
+WECR_COLUMN_ID = "Unnamed: 0"
+WECR_COLUMN_CLOTHING_ID = "Clothing ID"
+WECR_COLUMN_AGE = "Age"
+WECR_COLUMN_TITLE = "Title"
+WECR_COLUMN_REVIEW_TEXT = "Review Text"
+WECR_COLUMN_RATING = "Rating"
+WECR_COLUMN_RECOMMENDED_IND = "Recommended IND"
+WECR_COLUMN_POSITIVE_FEEDBACK_COUNT = "Positive Feedback Count"
+WECR_COLUMN_DIVISION_NAME = "Division Name"
+WECR_COLUMN_DEPARTMENT_NAME = "Department Name"
+WECR_COLUMN_CLASS_NAME = "Class Name"
+
+WECR_COLUMN_NAME_MAP = {
+    WECR_COLUMN_ID: "id",
+    WECR_COLUMN_CLOTHING_ID: WECR_COLUMN_CLOTHING_ID.lower().replace(" ", "_"),
+    WECR_COLUMN_AGE: WECR_COLUMN_AGE.lower().replace(" ", "_"),
+    WECR_COLUMN_TITLE: WECR_COLUMN_TITLE.lower().replace(" ", "_"),
+    WECR_COLUMN_REVIEW_TEXT: WECR_COLUMN_REVIEW_TEXT.lower().replace(" ", "_"),
+    WECR_COLUMN_RATING: WECR_COLUMN_RATING.lower().replace(" ", "_"),
+    WECR_COLUMN_RECOMMENDED_IND: WECR_COLUMN_RECOMMENDED_IND.lower().replace(" ", "_"),
+    WECR_COLUMN_POSITIVE_FEEDBACK_COUNT: WECR_COLUMN_POSITIVE_FEEDBACK_COUNT.lower().replace(
+        " ", "_"
+    ),
+    WECR_COLUMN_DIVISION_NAME: WECR_COLUMN_DIVISION_NAME.lower().replace(" ", "_"),
+    WECR_COLUMN_DEPARTMENT_NAME: WECR_COLUMN_DEPARTMENT_NAME.lower().replace(" ", "_"),
+    WECR_COLUMN_CLASS_NAME: WECR_COLUMN_CLASS_NAME.lower().replace(" ", "_"),
+}
+
+WECR_DATASET_COLUMNS_TYPE_MAP = {
+    WECR_COLUMN_CLOTHING_ID: "Int64",
+    WECR_COLUMN_AGE: "Int64",
+    WECR_COLUMN_TITLE: str,
+    WECR_COLUMN_REVIEW_TEXT: str,
+    WECR_COLUMN_RATING: "Int64",
+    WECR_COLUMN_RECOMMENDED_IND: "Int64",
+    WECR_COLUMN_POSITIVE_FEEDBACK_COUNT: "Int64",
+    WECR_COLUMN_DIVISION_NAME: str,
+    WECR_COLUMN_DEPARTMENT_NAME: str,
+    WECR_COLUMN_CLASS_NAME: str,
+}
+WECR_DATASET_COLUMNS = WECR_DATASET_COLUMNS_TYPE_MAP.keys()
+
+WECR_DATASET_NULLABLE_COLUMNS = [
+    WECR_COLUMN_AGE,
+    WECR_COLUMN_TITLE,
+    WECR_COLUMN_REVIEW_TEXT,
+    WECR_COLUMN_RATING,
+    WECR_COLUMN_RECOMMENDED_IND,
+    WECR_COLUMN_POSITIVE_FEEDBACK_COUNT,
+    WECR_COLUMN_DIVISION_NAME,
+    WECR_COLUMN_DEPARTMENT_NAME,
+    WECR_COLUMN_CLASS_NAME,
+]
+
 
 def MACRO_GET_DATASET_DIR(table):
     return f"{DATA_DIR}/{table}{DATA_FILE_EXTENSION}"
 
 
-def MACRO_GET_REQUIRED_COLUMNS(dataframe, table):
-    nullable_cols = [
-        col
-        for col in dataframe.columns
-        if col not in OLIST_DATASET_TABLES_NULLABLE_COLUMNS[table]
-    ]
+def MACRO_GET_REQUIRED_COLUMNS(dataframe, nullable_columns):
+    nullable_cols = [col for col in dataframe.columns if col not in nullable_columns]
     return nullable_cols if len(nullable_cols) > 0 else None

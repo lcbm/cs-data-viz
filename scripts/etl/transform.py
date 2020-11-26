@@ -22,7 +22,7 @@ def rename_files():
 
     for filename in files:
         if filename.endswith(".csv_new"):
-            new_filename = filename.replace(".csv_new", ".csv")
+            new_filename = filename.replace(".csv_new", ".csv").replace(" ", "_")
             os.rename(
                 f"{const.DATA_DIR}/{filename}", f"{const.DATA_DIR}/{new_filename}"
             )
@@ -30,6 +30,8 @@ def rename_files():
 
 def load_datasets(drop_na=False):
     dataframes = dict()
+
+    # Brazilian E-Commerce Public Dataset by Olist
     for table in const.OLIST_DATASET_TABLES:
         csv_file = const.MACRO_GET_DATASET_DIR(table)
         dtype = const.OLIST_DATASET_TABLES_TYPES_MAP.get(table, None)
@@ -38,7 +40,9 @@ def load_datasets(drop_na=False):
         if drop_na is True:
             df.replace(r"^\s*$", np.nan, regex=True, inplace=True)
 
-            subset = const.MACRO_GET_REQUIRED_COLUMNS(df, table)
+            subset = const.MACRO_GET_REQUIRED_COLUMNS(
+                df, const.OLIST_DATASET_TABLES_NULLABLE_COLUMNS[table]
+            )
             df.dropna(axis=0, subset=subset, inplace=True)
 
         __drop_duplicate_primary_keys(df)
@@ -46,6 +50,25 @@ def load_datasets(drop_na=False):
 
         dir = const.MACRO_GET_DATASET_DIR(table)
         __to_csv(df, dir)
+
+    # Women's E-Commerce Clothing Reviews
+    csv_file = const.MACRO_GET_DATASET_DIR(const.WECR_DATASET_TABLE)
+    wecr_df = pd.read_csv(csv_file, dtype=const.WECR_DATASET_COLUMNS_TYPE_MAP)
+
+    if drop_na is True:
+        wecr_df.replace(r"^\s*$", np.nan, regex=True, inplace=True)
+        subset = const.MACRO_GET_REQUIRED_COLUMNS(
+            wecr_df, const.WECR_DATASET_NULLABLE_COLUMNS
+        )
+        wecr_df.dropna(axis=0, subset=subset, inplace=True)
+
+    __rename_columns(wecr_df, const.WECR_COLUMN_NAME_MAP)
+    __drop_duplicate_primary_keys(wecr_df)
+
+    dataframes[const.WECR_DATASET_TABLE] = wecr_df
+
+    dir = const.MACRO_GET_DATASET_DIR(const.WECR_DATASET_TABLE)
+    __to_csv(wecr_df, dir)
 
     return dataframes
 
@@ -164,7 +187,7 @@ def replace_products_product_category_name(dataframes):
 
 def __drop_duplicate_primary_keys(dataframe):
     first_col = dataframe.columns[0]
-    if not first_col.endswith("_id"):
+    if not first_col.lower().endswith("id"):
         return
 
     dataframe.drop_duplicates(subset=[first_col], keep="last", inplace=True)
@@ -182,3 +205,7 @@ def __set_geolocation_primary_key_to_df(dataframe, table):
         axis=1,
     )
     return dataframe
+
+
+def __rename_columns(dataframe, column_name_map):
+    dataframe.rename(columns=column_name_map, inplace=True)
